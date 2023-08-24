@@ -1,0 +1,505 @@
+definitions:
+  cwalletapi.Asset:
+    properties:
+      asset_name:
+        type: string
+      policy_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  cwalletapi.Input:
+    properties:
+      address:
+        type: string
+      amount:
+        $ref: '#/definitions/cwalletapi.Quantity'
+      assets:
+        items:
+          $ref: '#/definitions/cwalletapi.Asset'
+        type: array
+      id:
+        type: string
+      index:
+        type: integer
+    type: object
+  cwalletapi.Metadata:
+    additionalProperties:
+      $ref: '#/definitions/cwalletapi.MetadataValue'
+    type: object
+  cwalletapi.MetadataMap:
+    properties:
+      k:
+        $ref: '#/definitions/cwalletapi.MetadataValue'
+      v:
+        $ref: '#/definitions/cwalletapi.MetadataValue'
+    type: object
+  cwalletapi.MetadataValue:
+    properties:
+      bytes:
+        type: string
+      int:
+        type: integer
+      list:
+        items:
+          $ref: '#/definitions/cwalletapi.MetadataValue'
+        type: array
+      map:
+        items:
+          $ref: '#/definitions/cwalletapi.MetadataMap'
+        type: array
+      string:
+        type: string
+    type: object
+  cwalletapi.Payment:
+    properties:
+      address:
+        type: string
+      amount:
+        $ref: '#/definitions/cwalletapi.Quantity'
+      assets:
+        items:
+          $ref: '#/definitions/cwalletapi.Asset'
+        type: array
+    type: object
+  cwalletapi.Quantity:
+    properties:
+      quantity:
+        type: integer
+      unit:
+        type: string
+    type: object
+  cwalletapi.Tip:
+    properties:
+      absolute_slot_number:
+        type: integer
+      epoch_number:
+        type: integer
+      height:
+        $ref: '#/definitions/cwalletapi.Quantity'
+      slot_number:
+        type: integer
+      time:
+        type: string
+    type: object
+  cwalletapi.Transaction:
+    properties:
+      amount:
+        $ref: '#/definitions/cwalletapi.Quantity'
+      expires_at:
+        $ref: '#/definitions/cwalletapi.Tip'
+      fee:
+        $ref: '#/definitions/cwalletapi.Quantity'
+      id:
+        type: string
+      inputs:
+        description: |-
+          Depth           Quantity `json:"depth"`
+          Direction       string    `json:"direction"`
+        items:
+          $ref: '#/definitions/cwalletapi.Input'
+        type: array
+      inserted_at:
+        allOf:
+        - $ref: '#/definitions/cwalletapi.Tip'
+        description: |-
+          DepositTaken    Quantity `json:"deposit_taken"`
+          DepositReturned Quantity `json:"deposit_returned"`
+      metadata:
+        $ref: '#/definitions/cwalletapi.Metadata'
+      outputs:
+        items:
+          $ref: '#/definitions/cwalletapi.Payment'
+        type: array
+      pending_since:
+        $ref: '#/definitions/cwalletapi.Tip'
+      script_validity:
+        type: string
+      status:
+        description: |-
+          Collaterals     []Collateral `json:"collateral"`
+          CollateralOutputs []Payment    `json:"collateral_outputs"`
+          Withdrawals       []Withdrawal `json:"withdrawals"`
+        type: string
+    type: object
+  models.AllTransactions:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/models.Transaction'
+        type: array
+    type: object
+  models.CardanoUser:
+    properties:
+      userHash:
+        type: string
+      userRuntime:
+        type: integer
+    type: object
+  models.ChangeSingleTransactionStatusResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  models.CreateTransactionRequest:
+    properties:
+      data:
+        $ref: '#/definitions/models.TransactionData'
+      type:
+        type: string
+    type: object
+  models.DeleteSingleTransactionResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  models.SaveTransactionDataResponse:
+    properties:
+      transactionId:
+        type: integer
+    type: object
+  models.SingleTransactionResponse:
+    properties:
+      addressTo:
+        type: string
+      assetAmount:
+        description: Quantity of assets
+        type: string
+      assetId:
+        type: string
+      cbor:
+        type: string
+      createdAt:
+        type: string
+      decimals:
+        type: string
+      decodedTx:
+        $ref: '#/definitions/cwalletapi.Transaction'
+      hash:
+        type: string
+      id:
+        type: integer
+      policyId:
+        type: string
+      status:
+        type: string
+      transferAmount:
+        description: Quantity of lovelaces
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.SingleTransactionStatusResponse:
+    properties:
+      transactionStatus:
+        type: string
+    type: object
+  models.Token:
+    properties:
+      address:
+        type: string
+      assetId:
+        type: string
+      assetName:
+        type: string
+      assetQuantity:
+        type: integer
+      assetUnit:
+        type: string
+      decimals:
+        type: integer
+      deposit:
+        type: integer
+      fee:
+        type: integer
+      logo:
+        type: string
+      policyId:
+        type: string
+      processingFee:
+        type: integer
+      rewardAddress:
+        type: string
+      ticker:
+        type: string
+      tokenPrice:
+        $ref: '#/definitions/models.TokenPrice'
+      totalQuantity:
+        type: integer
+    type: object
+  models.TokenPrice:
+    properties:
+      price:
+        type: integer
+    type: object
+  models.Transaction:
+    properties:
+      addressTo:
+        type: string
+      assetAmount:
+        description: Quantity of assets
+        type: string
+      assetId:
+        type: string
+      cbor:
+        type: string
+      createdAt:
+        type: string
+      decimals:
+        type: string
+      decodedTx:
+        $ref: '#/definitions/cwalletapi.Transaction'
+      hash:
+        type: string
+      id:
+        type: integer
+      policyId:
+        type: string
+      status:
+        type: string
+      transferAmount:
+        description: Quantity of lovelaces
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.TransactionData:
+    properties:
+      addressTo:
+        type: string
+      assetAmount:
+        description: Quantity of assets
+        type: string
+      assetId:
+        type: string
+      cbor:
+        type: string
+      decimals:
+        type: string
+      policyId:
+        type: string
+      transferAmount:
+        description: Quantity of lovelaces
+        type: string
+    type: object
+  models.TransactionStatus:
+    properties:
+      status:
+        type: string
+    type: object
+  models.UserSessionResponse:
+    properties:
+      expirationDateTime:
+        type: string
+      message:
+        type: string
+      sessionAuthorizationKey:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a service proxy app between frontend React.js app with Wallet
+    Extention and Cardano Node backend app.
+  title: Transactions proxy backend API
+  version: 0.1.1
+paths:
+  /api/v1/tokens:
+    get:
+      consumes:
+      - application/json
+      description: Get all tokens.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Token'
+            type: array
+      summary: Get All Tokens.
+      tags:
+      - tokens
+  /api/v1/tokens/{token_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get single token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Token'
+      summary: Get Single Token.
+      tags:
+      - tokens
+  /api/v1/tokens/{token_id}/price:
+    get:
+      consumes:
+      - application/json
+      description: Get single token price.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TokenPrice'
+      summary: Get Single Token Price.
+      tags:
+      - tokens
+  /api/v1/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get all user`s transaction.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AllTransactions'
+      summary: Get All Transactions.
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Save user`s transaction data from JSON.
+      parameters:
+      - description: Struct to create user`s single transaction
+        in: body
+        name: Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SaveTransactionDataResponse'
+      summary: Save Transaction.
+      tags:
+      - transactions
+  /api/v1/transactions/:transaction_id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user`s single transaction.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DeleteSingleTransactionResponse'
+      summary: Delete Single Transaction.
+      tags:
+      - transactions
+    get:
+      consumes:
+      - application/json
+      description: Get user`s single transaction.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SingleTransactionResponse'
+      summary: Get Single Transaction.
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Update user`s single transaction data from JSON.
+      parameters:
+      - description: Struct to update user`s single transaction
+        in: body
+        name: Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SaveTransactionDataResponse'
+      summary: Update Transaction.
+      tags:
+      - transactions
+  /api/v1/transactions/:transaction_id/status:
+    get:
+      consumes:
+      - application/json
+      description: Get user`s single transaction status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SingleTransactionStatusResponse'
+      summary: Get Single Transaction Status.
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Change user`s single transaction status with data from JSON.
+      parameters:
+      - description: Struct to store user`s new single transaction status
+        in: body
+        name: TransactionNewStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.TransactionStatus'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ChangeSingleTransactionStatusResponse'
+      summary: Change Single Transaction Status.
+      tags:
+      - transactions
+  /api/v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user for 24 hours and create new user in database if needed.
+      parameters:
+      - description: Struct for requested cardano user with hash of the wallet address
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.CardanoUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserSessionResponse'
+      summary: Login User.
+      tags:
+      - users
+swagger: "2.0"

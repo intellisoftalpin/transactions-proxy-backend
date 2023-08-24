@@ -1,0 +1,761 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a service proxy app between frontend React.js app with Wallet Extention and Cardano Node backend app.",
+        "title": "Transactions proxy backend API",
+        "contact": {},
+        "version": "0.1.1"
+    },
+    "paths": {
+        "/api/v1/tokens": {
+            "get": {
+                "description": "Get all tokens.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "Get All Tokens.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Token"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tokens/{token_id}": {
+            "get": {
+                "description": "Get single token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "Get Single Token.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Token"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tokens/{token_id}/price": {
+            "get": {
+                "description": "Get single token price.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tokens"
+                ],
+                "summary": "Get Single Token Price.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TokenPrice"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transactions": {
+            "get": {
+                "description": "Get all user`s transaction.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get All Transactions.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AllTransactions"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Save user`s transaction data from JSON.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Save Transaction.",
+                "parameters": [
+                    {
+                        "description": "Struct to create user`s single transaction",
+                        "name": "Transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SaveTransactionDataResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transactions/:transaction_id": {
+            "get": {
+                "description": "Get user`s single transaction.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Single Transaction.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SingleTransactionResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update user`s single transaction data from JSON.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Update Transaction.",
+                "parameters": [
+                    {
+                        "description": "Struct to update user`s single transaction",
+                        "name": "Transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SaveTransactionDataResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete user`s single transaction.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Delete Single Transaction.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DeleteSingleTransactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transactions/:transaction_id/status": {
+            "get": {
+                "description": "Get user`s single transaction status.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Single Transaction Status.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SingleTransactionStatusResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Change user`s single transaction status with data from JSON.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Change Single Transaction Status.",
+                "parameters": [
+                    {
+                        "description": "Struct to store user`s new single transaction status",
+                        "name": "TransactionNewStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransactionStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ChangeSingleTransactionStatusResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/login": {
+            "post": {
+                "description": "Login user for 24 hours and create new user in database if needed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login User.",
+                "parameters": [
+                    {
+                        "description": "Struct for requested cardano user with hash of the wallet address",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CardanoUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserSessionResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "cwalletapi.Asset": {
+            "type": "object",
+            "properties": {
+                "asset_name": {
+                    "type": "string"
+                },
+                "policy_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cwalletapi.Input": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "amount": {
+                    "$ref": "#/definitions/cwalletapi.Quantity"
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.Asset"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "index": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cwalletapi.Metadata": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/cwalletapi.MetadataValue"
+            }
+        },
+        "cwalletapi.MetadataMap": {
+            "type": "object",
+            "properties": {
+                "k": {
+                    "$ref": "#/definitions/cwalletapi.MetadataValue"
+                },
+                "v": {
+                    "$ref": "#/definitions/cwalletapi.MetadataValue"
+                }
+            }
+        },
+        "cwalletapi.MetadataValue": {
+            "type": "object",
+            "properties": {
+                "bytes": {
+                    "type": "string"
+                },
+                "int": {
+                    "type": "integer"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.MetadataValue"
+                    }
+                },
+                "map": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.MetadataMap"
+                    }
+                },
+                "string": {
+                    "type": "string"
+                }
+            }
+        },
+        "cwalletapi.Payment": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "amount": {
+                    "$ref": "#/definitions/cwalletapi.Quantity"
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.Asset"
+                    }
+                }
+            }
+        },
+        "cwalletapi.Quantity": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "type": "integer"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "cwalletapi.Tip": {
+            "type": "object",
+            "properties": {
+                "absolute_slot_number": {
+                    "type": "integer"
+                },
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "height": {
+                    "$ref": "#/definitions/cwalletapi.Quantity"
+                },
+                "slot_number": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "cwalletapi.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "$ref": "#/definitions/cwalletapi.Quantity"
+                },
+                "expires_at": {
+                    "$ref": "#/definitions/cwalletapi.Tip"
+                },
+                "fee": {
+                    "$ref": "#/definitions/cwalletapi.Quantity"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Depth           Quantity `json:\"depth\"`\nDirection       string    `json:\"direction\"`",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.Input"
+                    }
+                },
+                "inserted_at": {
+                    "description": "DepositTaken    Quantity `json:\"deposit_taken\"`\nDepositReturned Quantity `json:\"deposit_returned\"`",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/cwalletapi.Tip"
+                        }
+                    ]
+                },
+                "metadata": {
+                    "$ref": "#/definitions/cwalletapi.Metadata"
+                },
+                "outputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/cwalletapi.Payment"
+                    }
+                },
+                "pending_since": {
+                    "$ref": "#/definitions/cwalletapi.Tip"
+                },
+                "script_validity": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Collaterals     []Collateral `json:\"collateral\"`\nCollateralOutputs []Payment    `json:\"collateral_outputs\"`\nWithdrawals       []Withdrawal `json:\"withdrawals\"`",
+                    "type": "string"
+                }
+            }
+        },
+        "models.AllTransactions": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Transaction"
+                    }
+                }
+            }
+        },
+        "models.CardanoUser": {
+            "type": "object",
+            "properties": {
+                "userHash": {
+                    "type": "string"
+                },
+                "userRuntime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ChangeSingleTransactionStatusResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateTransactionRequest": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.TransactionData"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DeleteSingleTransactionResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaveTransactionDataResponse": {
+            "type": "object",
+            "properties": {
+                "transactionId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SingleTransactionResponse": {
+            "type": "object",
+            "properties": {
+                "addressTo": {
+                    "type": "string"
+                },
+                "assetAmount": {
+                    "description": "Quantity of assets",
+                    "type": "string"
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "cbor": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "string"
+                },
+                "decodedTx": {
+                    "$ref": "#/definitions/cwalletapi.Transaction"
+                },
+                "hash": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "policyId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transferAmount": {
+                    "description": "Quantity of lovelaces",
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SingleTransactionStatusResponse": {
+            "type": "object",
+            "properties": {
+                "transactionStatus": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Token": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "assetName": {
+                    "type": "string"
+                },
+                "assetQuantity": {
+                    "type": "integer"
+                },
+                "assetUnit": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "deposit": {
+                    "type": "integer"
+                },
+                "fee": {
+                    "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "policyId": {
+                    "type": "string"
+                },
+                "processingFee": {
+                    "type": "integer"
+                },
+                "rewardAddress": {
+                    "type": "string"
+                },
+                "ticker": {
+                    "type": "string"
+                },
+                "tokenPrice": {
+                    "$ref": "#/definitions/models.TokenPrice"
+                },
+                "totalQuantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TokenPrice": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Transaction": {
+            "type": "object",
+            "properties": {
+                "addressTo": {
+                    "type": "string"
+                },
+                "assetAmount": {
+                    "description": "Quantity of assets",
+                    "type": "string"
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "cbor": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "string"
+                },
+                "decodedTx": {
+                    "$ref": "#/definitions/cwalletapi.Transaction"
+                },
+                "hash": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "policyId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transferAmount": {
+                    "description": "Quantity of lovelaces",
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TransactionData": {
+            "type": "object",
+            "properties": {
+                "addressTo": {
+                    "type": "string"
+                },
+                "assetAmount": {
+                    "description": "Quantity of assets",
+                    "type": "string"
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "cbor": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "string"
+                },
+                "policyId": {
+                    "type": "string"
+                },
+                "transferAmount": {
+                    "description": "Quantity of lovelaces",
+                    "type": "string"
+                }
+            }
+        },
+        "models.TransactionStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserSessionResponse": {
+            "type": "object",
+            "properties": {
+                "expirationDateTime": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "sessionAuthorizationKey": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
