@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	walletPB "gitlab.com/encryptoteam/createtoken/token-lib-proto/proto-gen/wallet"
+	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
 
 	"github.com/intellisoftalpin/transactions-proxy-backend/consts"
 	tlpsdb "github.com/intellisoftalpin/transactions-proxy-backend/internal/pkg/db"

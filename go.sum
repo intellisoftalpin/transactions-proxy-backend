@@ -38,6 +38,8 @@ github.com/gookit/goutil v0.6.12 h1:73vPUcTtVGXbhSzBOFcnSB1aJl7Jq9np3RAE50yIDZc=
 github.com/gookit/goutil v0.6.12/go.mod h1:g6krlFib8xSe3G1h02IETowOtrUGpAmetT8IevDpvpM=
 github.com/gookit/validate v1.5.1 h1:rPp64QZQJM+fysGFAhKpvekQAav4Ok6sjfTs9ZtxcpA=
 github.com/gookit/validate v1.5.1/go.mod h1:SskOHUQokzMNt6T3r7N+N/4me/6fxDx+tmoXf/3ZQog=
+github.com/intellisoftalpin/proto v0.0.1 h1:GOReRkC4CFhtDnSzXRgRv42uePfi8g348sBen0m0p8s=
+github.com/intellisoftalpin/proto v0.0.1/go.mod h1:o5GGarRSR/p9dKPU9hMx86Tyb7rQaA37MOmLVrx8ufM=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=
@@ -97,8 +99,6 @@ github.com/valyala/fasttemplate v1.2.1/go.mod h1:KHLXt3tVN2HBp8eijSv/kGJopbvo7S+
 github.com/valyala/fasttemplate v1.2.2 h1:lxLXG0uE3Qnshl9QyaK6XJxMXlQZELvChBOCmQD0Loo=
 github.com/valyala/fasttemplate v1.2.2/go.mod h1:KHLXt3tVN2HBp8eijSv/kGJopbvo7S+qRAEEKiv+SiQ=
 github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
-gitlab.com/encryptoteam/createtoken/token-lib-proto v0.0.15 h1:zLknZdxPInY3ysFvAH0OCRG3crEw/miBKWV0onlwN0E=
-gitlab.com/encryptoteam/createtoken/token-lib-proto v0.0.15/go.mod h1:bw8uCe5SsjyPd8iqo5g8tqn6XaX+Mk1GmZmoG2RfTpA=
 golang.org/x/crypto v0.12.0 h1:tFM/ta59kqch6LlvYnPa0yx5a83cL2nHflFhYKvv9Yk=
 golang.org/x/crypto v0.12.0/go.mod h1:NF0Gs7EO5K4qLn+Ylc+fih8BSTeIjAP05siRnAh98yw=
 golang.org/x/mod v0.12.0 h1:rmsUpXtvNzj340zd98LZ4KntptpfRHwpFOHG188oHXc=

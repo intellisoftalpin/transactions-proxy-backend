@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
+	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
 	"github.com/intellisoftalpin/transactions-proxy-backend/models"
-	walletPB "gitlab.com/encryptoteam/createtoken/token-lib-proto/proto-gen/wallet"
 )
 
 type TokensRepo struct {

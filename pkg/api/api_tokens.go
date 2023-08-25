@@ -3,11 +3,11 @@ package api
 import (
 	"net/http"
 
+	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
 	"github.com/intellisoftalpin/transactions-proxy-backend/consts"
 	"github.com/intellisoftalpin/transactions-proxy-backend/internal/pkg/repository"
 	utils "github.com/intellisoftalpin/transactions-proxy-backend/internal/pkg/utils"
 	"github.com/labstack/echo/v4"
-	walletPB "gitlab.com/encryptoteam/createtoken/token-lib-proto/proto-gen/wallet"
 )
 
 type TokensAPI struct {
