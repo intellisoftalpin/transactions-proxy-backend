@@ -257,3 +257,23 @@ func (api *TransactionsAPI) DeleteSingleTransaction(c echo.Context) error {
 
 	return utils.PrepareSuccessResponse(c, deleteSingleTransactionResponse)
 }
+
+// ################################################################################
+// GetOngoingTransactions - function to get user`s ongoing transactions
+// GetOngoingTransactions godoc
+// @Summary Get Ongoing Transactions.
+// @Description Get user`s ongoing transactions.
+// @Tags transactions
+// @Produce json
+// @Success 200 {object} models.OngoingTransactions
+// @Router /api/v1/transactions/ongoing [GET]
+func (api *TransactionsAPI) GetOngoingTransactions(c echo.Context) error {
+	sessionID := c.Request().Header.Get("session_id")
+
+	ongoingTransactionsResponse, err := api.transactionsRepo.GetOngoingTransactions(sessionID)
+	if err != nil {
+		return utils.PrepareErrorResponse(c, err.Error(), consts.CErrorsInternalError, http.StatusInternalServerError)
+	}
+
+	return utils.PrepareSuccessResponse(c, ongoingTransactionsResponse)
+}

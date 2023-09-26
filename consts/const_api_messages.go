@@ -40,3 +40,10 @@ const (
 	CErrorsInternalError       = "internalError"
 	CErrorInvalidTransactionID = "invalidTransactionID"
 )
+
+const (
+	CActiveTransactionStepSubmit           = "submit"           // 1
+	CActiveTransactionStepUpdateStatus     = "updateStatus"     // 2
+	CActiveTransactionStepSend             = "send"             // 3
+	CActiveTransactionStepOnlyUpdateStatus = "onlyUpdateStatus" // 4
+)

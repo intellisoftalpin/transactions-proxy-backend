@@ -40,3 +40,21 @@ type TransactionData struct {
 	AssetID        string `json:"assetId"`
 	CBOR           string `json:"cbor"`
 }
+
+type ActiveTransaction struct {
+	ID       uint64 `json:"id"`
+	UserID   uint64 `json:"userId"`
+	TxID     uint64 `json:"txId"`
+	Step     string `json:"step"`
+	Attempts int    `json:"attempts"`
+}
+
+type OngoingTransaction struct {
+	ID        uint64 `json:"id"`
+	UserID    uint64 `json:"userId"`
+	TxID      uint64 `json:"txId"`
+	Step      string `json:"step"`
+	Attempts  int    `json:"attempts"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
