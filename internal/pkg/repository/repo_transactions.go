@@ -291,19 +291,24 @@ func (t *TransactionsRepo) DeleteSingleTransaction(txID uint64, sessionID string
 }
 
 // ################################################################################
-// GetOngoingTransactions - function to get ongoing user`s transactions
-func (t *TransactionsRepo) GetOngoingTransactions(sessionID string) (ongoingTransactionsResponse []models.OngoingTransaction, err error) {
+// models.ActiveTransactionsResponse
+// CheckActiveTransactions - function to get active user`s transactions
+func (t *TransactionsRepo) CheckActiveTransactions(sessionID string) (activeTransactionsResponse models.ActiveTransactionsResponse, err error) {
 	userID, err := t.GetUserIDFromSessionID(sessionID)
 	if err != nil {
-		return ongoingTransactionsResponse, err
+		return activeTransactionsResponse, err
 	}
 
-	ongoingTransactionsResponse, err = t.TransactionsDB.GetOngoingTransactions(userID)
+	ongoingTransactions, err := t.TransactionsDB.GetOngoingTransactions(userID)
 	if err != nil {
-		return ongoingTransactionsResponse, err
+		return activeTransactionsResponse, err
 	}
 
-	return ongoingTransactionsResponse, nil
+	if len(ongoingTransactions) > 0 {
+		activeTransactionsResponse.IsBusy = true
+	}
+
+	return activeTransactionsResponse, nil
 }
 
 // ------------------------------------------------------------------------------------------

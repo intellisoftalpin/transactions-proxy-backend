@@ -122,6 +122,11 @@ definitions:
           Withdrawals       []Withdrawal `json:"withdrawals"`
         type: string
     type: object
+  models.ActiveTransactionsResponse:
+    properties:
+      isBusy:
+        type: boolean
+    type: object
   models.AllTransactions:
     properties:
       transactions:
@@ -478,6 +483,19 @@ paths:
           schema:
             $ref: '#/definitions/models.ChangeSingleTransactionStatusResponse'
       summary: Change Single Transaction Status.
+      tags:
+      - transactions
+  /api/v1/transactions/ongoing:
+    get:
+      description: Check user`s active transactions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ActiveTransactionsResponse'
+      summary: Check Active Transactions.
       tags:
       - transactions
   /api/v1/user/login:

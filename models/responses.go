@@ -43,3 +43,7 @@ type DeleteSingleTransactionResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
+
+type ActiveTransactionsResponse struct {
+	IsBusy bool `json:"isBusy"`
+}

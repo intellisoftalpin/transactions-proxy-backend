@@ -274,6 +274,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/transactions/ongoing": {
+            "get": {
+                "description": "Check user` + "`" + `s active transactions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Check Active Transactions.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ActiveTransactionsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/login": {
             "post": {
                 "description": "Login user for 24 hours and create new user in database if needed.",
@@ -486,6 +506,14 @@ const docTemplate = `{
                 "status": {
                     "description": "Collaterals     []Collateral ` + "`" + `json:\"collateral\"` + "`" + `\nCollateralOutputs []Payment    ` + "`" + `json:\"collateral_outputs\"` + "`" + `\nWithdrawals       []Withdrawal ` + "`" + `json:\"withdrawals\"` + "`" + `",
                     "type": "string"
+                }
+            }
+        },
+        "models.ActiveTransactionsResponse": {
+            "type": "object",
+            "properties": {
+                "isBusy": {
+                    "type": "boolean"
                 }
             }
         },

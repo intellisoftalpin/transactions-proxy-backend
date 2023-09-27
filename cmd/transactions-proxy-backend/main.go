@@ -102,8 +102,8 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	// Get all user`s transactions
 	transactions.GET("", apiHandlers.TransactionsAPI.GetAllTransactions)
 
-	// Get ongoing user`s transactions
-	transactions.GET("/ongoing", apiHandlers.TransactionsAPI.GetOngoingTransactions)
+	// Get active user`s transactions
+	transactions.GET("/active", apiHandlers.TransactionsAPI.CheckActiveTransactions)
 
 	// Get user`s single transaction
 	transactions.GET("/:transaction_id", apiHandlers.TransactionsAPI.GetSingleTransaction)
