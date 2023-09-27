@@ -484,16 +484,17 @@ func (t *TransactionsRepo) updateTransactionStatus() {
 					}
 
 					log.Println("Transaction TxID:", txID, "UserID:", userID, "Stored in transactionsToSend")
-				}
-				// t.transactionsToUpdateStatus.Delete(txID)
+				} else {
+					// t.transactionsToUpdateStatus.Delete(txID)
 
-				// Delete transaction from active_transactions
-				if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
-					log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
-					continue
-				}
+					// Delete transaction from active_transactions
+					if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+						log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+						continue
+					}
 
-				log.Println("Transaction TxID:", txID, "UserID:", userID, "Status:", status, "Deleted from transactionsToUpdateStatus")
+					log.Println("Transaction TxID:", txID, "UserID:", userID, "Status:", status, "Deleted from transactionsToUpdateStatus")
+				}
 			}
 		}
 	}
