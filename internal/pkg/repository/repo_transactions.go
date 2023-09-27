@@ -578,8 +578,14 @@ func (t *TransactionsRepo) createTransactions() {
 				continue
 			}
 
+			// Delete transaction from active_transactions
+			if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+				log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+				continue
+			}
+
 			// Update transaction status from active_transactions
-			if err = t.TransactionsDB.UpdateActiveTransactionStep(value.ID, consts.CActiveTransactionStepOnlyUpdateStatus); err != nil {
+			if err = t.TransactionsDB.InsertActiveTransaction(userID, txID, consts.CActiveTransactionStepOnlyUpdateStatus); err != nil {
 				log.Println("UpdateActiveTransactionStep TxID:", txID, "UserID:", userID, "Error:", err)
 				continue
 			}
