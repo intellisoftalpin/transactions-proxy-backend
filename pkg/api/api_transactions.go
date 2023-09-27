@@ -266,7 +266,7 @@ func (api *TransactionsAPI) DeleteSingleTransaction(c echo.Context) error {
 // @Tags transactions
 // @Produce json
 // @Success 200 {object} models.ActiveTransactionsResponse
-// @Router /api/v1/transactions/ongoing [GET]
+// @Router /api/v1/transactions/active [GET]
 func (api *TransactionsAPI) CheckActiveTransactions(c echo.Context) error {
 	sessionID := c.Request().Header.Get("session_id")
 

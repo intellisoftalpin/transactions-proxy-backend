@@ -274,7 +274,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/transactions/ongoing": {
+        "/api/v1/transactions/active": {
             "get": {
                 "description": "Check user` + "`" + `s active transactions.",
                 "produces": [

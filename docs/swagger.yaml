@@ -485,7 +485,7 @@ paths:
       summary: Change Single Transaction Status.
       tags:
       - transactions
-  /api/v1/transactions/ongoing:
+  /api/v1/transactions/active:
     get:
       description: Check user`s active transactions.
       produces:
