@@ -131,6 +131,12 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	// Get single token price
 	tokens.GET("/:token_id/price", apiHandlers.TokensAPI.GetSingleTokenPrice)
 
+	// Pools
+	pools := g.Group("/pools")
+
+	// Get all pools
+	pools.GET("", apiHandlers.PoolsAPI.GetAllPools)
+
 	return e
 }
 

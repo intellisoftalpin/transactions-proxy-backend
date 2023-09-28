@@ -13,6 +13,7 @@ type API struct {
 	UsersAPI        *UsersAPI
 	TransactionsAPI *TransactionsAPI
 	TokensAPI       *TokensAPI
+	PoolsAPI        *PoolsAPI
 
 	Config *models.Config
 }
@@ -24,6 +25,7 @@ func NewAPI(db *sql.DB, config *models.Config, sessions *models.Sessions, conn *
 		UsersAPI:        NewUsersAPI(db, config, sessions),
 		TransactionsAPI: NewTransactionsAPI(db, config, sessions, walletClient),
 		TokensAPI:       NewTokensAPI(walletClient),
+		PoolsAPI:        NewPoolsAPI(),
 
 		Config: config,
 	}

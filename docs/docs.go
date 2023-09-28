@@ -16,6 +16,29 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/pools": {
+            "get": {
+                "description": "Get all pools.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pools"
+                ],
+                "summary": "Get All Pools.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Pool"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/tokens": {
             "get": {
                 "description": "Get all tokens.",
@@ -565,6 +588,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Pool": {
+            "type": "object",
+            "properties": {
+                "fee": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pledge": {
+                    "description": "Committed Pledge in Lovelaces",
+                    "type": "string"
+                },
+                "poolId": {
+                    "description": "BECH 32 Pool Id",
+                    "type": "string"
+                },
+                "rose12": {
+                    "type": "string"
+                },
+                "saturation": {
+                    "description": "Reward Stake in Lovelaces",
+                    "type": "string"
+                },
+                "ticker": {
                     "type": "string"
                 }
             }

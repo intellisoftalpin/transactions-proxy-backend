@@ -160,6 +160,28 @@ definitions:
       status:
         type: string
     type: object
+  models.Pool:
+    properties:
+      fee:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      pledge:
+        description: Committed Pledge in Lovelaces
+        type: string
+      poolId:
+        description: BECH 32 Pool Id
+        type: string
+      rose12:
+        type: string
+      saturation:
+        description: Reward Stake in Lovelaces
+        type: string
+      ticker:
+        type: string
+    type: object
   models.SaveTransactionDataResponse:
     properties:
       transactionId:
@@ -316,6 +338,21 @@ info:
   title: Transactions proxy backend API
   version: 0.1.1
 paths:
+  /api/v1/pools:
+    get:
+      description: Get all pools.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Pool'
+            type: array
+      summary: Get All Pools.
+      tags:
+      - pools
   /api/v1/tokens:
     get:
       consumes:
