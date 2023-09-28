@@ -26,7 +26,7 @@ func NewPoolsAPI() *PoolsAPI {
 // @Description Get all pools.
 // @Tags pools
 // @Produce json
-// @Success 200 {object} []models.Pool
+// @Success 200 {object} models.Pools
 // @Router /api/v1/pools [GET]
 func (api *PoolsAPI) GetAllPools(c echo.Context) error {
 	pools, err := api.poolsRepo.GetAllPools()

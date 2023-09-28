@@ -30,10 +30,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Pool"
-                            }
+                            "$ref": "#/definitions/models.Pools"
                         }
                     }
                 }
@@ -621,6 +618,17 @@ const docTemplate = `{
                 },
                 "ticker": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Pools": {
+            "type": "object",
+            "properties": {
+                "pools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Pool"
+                    }
                 }
             }
         },

@@ -8,17 +8,19 @@ func NewPoolsRepo() *PoolsRepo {
 	return &PoolsRepo{}
 }
 
-func (p *PoolsRepo) GetAllPools() ([]models.Pool, error) {
-	pools := []models.Pool{
-		{
-			ID:         1,
-			Ticker:     "JNGL",
-			Name:       "Jungle",
-			PoolID:     "pool1lk6cxjaqd66t4t74q4gd9hymxapd93fvchhxt0uxwwprk9m8v6c",
-			Saturation: "39403197265",
-			Pledge:     "110000000",
-			Fee:        "1%",
-			ROSe12:     "2.25%",
+func (p *PoolsRepo) GetAllPools() (models.Pools, error) {
+	pools := models.Pools{
+		Pools: []models.Pool{
+			{
+				ID:         1,
+				Ticker:     "JNGL",
+				Name:       "Jungle",
+				PoolID:     "pool1lk6cxjaqd66t4t74q4gd9hymxapd93fvchhxt0uxwwprk9m8v6c",
+				Saturation: "39403197265",
+				Pledge:     "110000000",
+				Fee:        "1%",
+				ROSe12:     "2.25%",
+			},
 		},
 	}
 

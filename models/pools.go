@@ -1,5 +1,9 @@
 package models
 
+type Pools struct {
+	Pools []Pool `json:"pools"`
+}
+
 type Pool struct {
 	ID         int    `json:"id"`
 	Ticker     string `json:"ticker"`

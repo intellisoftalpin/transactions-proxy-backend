@@ -21,10 +21,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Pool"
-                            }
+                            "$ref": "#/definitions/models.Pools"
                         }
                     }
                 }
@@ -612,6 +609,17 @@
                 },
                 "ticker": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Pools": {
+            "type": "object",
+            "properties": {
+                "pools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Pool"
+                    }
                 }
             }
         },
