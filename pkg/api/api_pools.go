@@ -6,6 +6,7 @@ import (
 	"github.com/intellisoftalpin/transactions-proxy-backend/consts"
 	"github.com/intellisoftalpin/transactions-proxy-backend/internal/pkg/repository"
 	utils "github.com/intellisoftalpin/transactions-proxy-backend/internal/pkg/utils"
+	models "github.com/intellisoftalpin/transactions-proxy-backend/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,9 +14,9 @@ type PoolsAPI struct {
 	poolsRepo *repository.PoolsRepo
 }
 
-func NewPoolsAPI() *PoolsAPI {
+func NewPoolsAPI(config *models.Config) *PoolsAPI {
 	return &PoolsAPI{
-		poolsRepo: repository.NewPoolsRepo(),
+		poolsRepo: repository.NewPoolsRepo(config),
 	}
 }
 

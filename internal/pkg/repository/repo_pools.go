@@ -2,26 +2,21 @@ package repository
 
 import "github.com/intellisoftalpin/transactions-proxy-backend/models"
 
-type PoolsRepo struct{}
+type PoolsRepo struct {
+	config *models.Config
+}
 
-func NewPoolsRepo() *PoolsRepo {
-	return &PoolsRepo{}
+func NewPoolsRepo(config *models.Config) *PoolsRepo {
+	return &PoolsRepo{
+		config: config,
+	}
 }
 
 func (p *PoolsRepo) GetAllPools() (models.Pools, error) {
-	pools := models.Pools{
-		Pools: []models.Pool{
-			{
-				ID:         1,
-				Ticker:     "JNGL",
-				Name:       "Jungle",
-				PoolID:     "pool1lk6cxjaqd66t4t74q4gd9hymxapd93fvchhxt0uxwwprk9m8v6c",
-				Saturation: "39403197265",
-				Pledge:     "110000000",
-				Fee:        "1%",
-				ROSe12:     "2.25%",
-			},
-		},
+	pools := models.Pools{}
+
+	for _, poolID := range p.config.Pools {
+		pools.Pools = append(pools.Pools, models.Pool{PoolID: poolID})
 	}
 
 	return pools, nil

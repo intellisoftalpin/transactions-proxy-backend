@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strings"
 
 	"github.com/intellisoftalpin/transactions-proxy-backend/models"
 )
@@ -20,6 +21,8 @@ func LoadConfig() (loadedConfig *models.Config, err error) {
 			Database: os.Getenv("POSTGRES_DB_NAME"),
 		},
 	}
+
+	loadedConfig.Pools = strings.Split(os.Getenv("POOLS"), ";")
 
 	// log.Infoln("Loaded config:", loadedConfig)
 
