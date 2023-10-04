@@ -36,6 +36,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/pools/delegate": {
+            "post": {
+                "description": "Delegate to pool.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pools"
+                ],
+                "summary": "Delegate to pool.",
+                "parameters": [
+                    {
+                        "description": "DelegateToPoolRequest",
+                        "name": "DelegateToPoolRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DelegateToPoolRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/tokens": {
             "get": {
                 "description": "Get all tokens.",
@@ -574,6 +608,14 @@ const docTemplate = `{
                     "$ref": "#/definitions/models.TransactionData"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DelegateToPoolRequest": {
+            "type": "object",
+            "properties": {
+                "cbor": {
                     "type": "string"
                 }
             }

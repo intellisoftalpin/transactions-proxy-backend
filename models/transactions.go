@@ -58,3 +58,9 @@ type OngoingTransaction struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }
+
+// ----------------------------------------------------------------------------
+
+type DelegateToPoolRequest struct {
+	CBOR string `json:"cbor"`
+}

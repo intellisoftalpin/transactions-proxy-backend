@@ -137,6 +137,9 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	// Get all pools
 	pools.GET("", apiHandlers.PoolsAPI.GetAllPools)
 
+	// Delegate to pool
+	pools.POST("/:pool_id/delegate", apiHandlers.PoolsAPI.DelegateToPool)
+
 	return e
 }
 

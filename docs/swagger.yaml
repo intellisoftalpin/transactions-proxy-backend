@@ -153,6 +153,11 @@ definitions:
       type:
         type: string
     type: object
+  models.DelegateToPoolRequest:
+    properties:
+      cbor:
+        type: string
+    type: object
   models.DeleteSingleTransactionResponse:
     properties:
       message:
@@ -356,6 +361,28 @@ paths:
           schema:
             $ref: '#/definitions/models.Pools'
       summary: Get All Pools.
+      tags:
+      - pools
+  /api/v1/pools/delegate:
+    post:
+      consumes:
+      - application/json
+      description: Delegate to pool.
+      parameters:
+      - description: DelegateToPoolRequest
+        in: body
+        name: DelegateToPoolRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.DelegateToPoolRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delegate to pool.
       tags:
       - pools
   /api/v1/tokens:
