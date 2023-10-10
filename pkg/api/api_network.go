@@ -48,7 +48,7 @@ func NewNetworkAPI(walletClient walletPB.WalletClient) *NetworkAPI {
 
 			walletsState, err := n.WalletClient.GetWalletsState(ctx, &walletPB.Empty{})
 			if err != nil {
-				log.Println("GetWalletsState error: ", err.Error())
+				log.Println("GetWalletsState error: ", err.Error()) // 2023/10/10 17:49:20 GetWalletsState error:  rpc error: code = Unimplemented desc = unknown method GetWalletsState for service wallet.Wallet
 				n.walletsState = []models.WalletState{}
 				n.walletNetworkReady = false
 			} else {
@@ -75,14 +75,15 @@ func (api *NetworkAPI) MiddlewareNetworkReady(next echo.HandlerFunc) echo.Handle
 			msg := "Wallet network is not ready. Network Status: " + api.cnodeNetworkInfo.SyncProgress.Status
 
 			if api.cnodeNetworkInfo.SyncProgress.Status == "syncing" {
-				msg += ". Progress: " + strconv.FormatUint(api.cnodeNetworkInfo.SyncProgress.Progress.Quantity, 10)
+				msg += ". Progress: " + strconv.FormatFloat(float64(api.cnodeNetworkInfo.SyncProgress.Progress.Quantity), 'f', 2, 32)
 			}
 
+			// не работает!!!!!!!!!!!!!!!
 			for _, walletState := range api.walletsState {
 				if walletState.Status != consts.CSyncProgressStatusReady {
 					msg += ". Wallet Status: " + walletState.Status
 					if walletState.Status == "syncing" {
-						msg += ". Progress: " + strconv.FormatUint(walletState.Progress.Quantity, 10)
+						msg += ". Progress: " + strconv.FormatFloat(float64(walletState.Progress.Quantity), 'f', 2, 32)
 					}
 				}
 			}

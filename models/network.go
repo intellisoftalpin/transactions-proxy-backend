@@ -6,7 +6,7 @@ import (
 
 type WalletState struct {
 	Status   string   `json:"status"`
-	Progress Quantity `json:"progress"`
+	Progress Progress `json:"progress"`
 }
 
 type NetworkInfoResponse struct {
@@ -46,12 +46,16 @@ type NodeTip struct {
 
 type SyncProgress struct {
 	Status   string   `json:"status"`
-	Progress Quantity `json:"progress"`
+	Progress Progress `json:"progress"`
 }
 
 type Quantity struct {
 	Quantity uint64 `json:"quantity"`
 	Unit     string `json:"unit"`
+}
+type Progress struct {
+	Quantity float32 `json:"quantity"`
+	Unit     string  `json:"unit"`
 }
 
 func ToNetworkInfoResponse(nInfo *walletPB.GetWalletNetworkInfoResponse) NetworkInfoResponse {
@@ -83,7 +87,7 @@ func ToNetworkInfoResponse(nInfo *walletPB.GetWalletNetworkInfoResponse) Network
 		},
 		SyncProgress: SyncProgress{
 			Status: nInfo.SyncProgress.Status,
-			Progress: Quantity{
+			Progress: Progress{
 				Quantity: nInfo.SyncProgress.Progress.Quantity,
 				Unit:     nInfo.SyncProgress.Progress.Unit,
 			},
@@ -98,7 +102,7 @@ func ToWalletsState(walletsState *walletPB.GetWalletsStateResponse) []WalletStat
 	for _, w := range walletsState.WalletsState {
 		wallets = append(wallets, WalletState{
 			Status: w.Status,
-			Progress: Quantity{
+			Progress: Progress{
 				Quantity: w.Progress.Quantity,
 				Unit:     w.Progress.Unit,
 			},
