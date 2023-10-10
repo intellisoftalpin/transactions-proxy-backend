@@ -70,10 +70,19 @@ func (api *NetworkAPI) MiddlewareNetworkReady(next echo.HandlerFunc) echo.Handle
 	return func(c echo.Context) error {
 
 		if !api.walletNetworkReady {
-			msg := "Wallet network is not ready. Status: " + api.cnodeNetworkInfo.SyncProgress.Status
+			msg := "Wallet network is not ready. Network Status: " + api.cnodeNetworkInfo.SyncProgress.Status
 
 			if api.cnodeNetworkInfo.SyncProgress.Status == "syncing" {
 				msg += ". Progress: " + strconv.FormatUint(api.cnodeNetworkInfo.SyncProgress.Progress.Quantity, 10)
+			}
+
+			for _, walletState := range api.walletsState {
+				if walletState.Status != consts.CSyncProgressStatusReady {
+					msg += ". Wallet Status: " + walletState.Status
+					if walletState.Status == "syncing" {
+						msg += ". Progress: " + strconv.FormatUint(walletState.Progress.Quantity, 10)
+					}
+				}
 			}
 
 			return utils.PrepareErrorResponse(c, msg, consts.CErrorWalletNetworkIsNotReady, http.StatusServiceUnavailable)
