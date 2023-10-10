@@ -102,5 +102,12 @@ func (api *NetworkAPI) MiddlewareNetworkReady(next echo.HandlerFunc) echo.Handle
 // @Success 200 {object} models.NetworkInfoResponse
 // @Router /api/v1/network/info [get]
 func (api *NetworkAPI) GetNetworkInfo(c echo.Context) error {
-	return utils.PrepareSuccessResponse(c, api.cnodeNetworkInfo)
+	resp := struct {
+		NetworkInfoResponse models.NetworkInfoResponse `json:"network_info"`
+		WalletsState        []models.WalletState       `json:"wallets_state"`
+	}{
+		NetworkInfoResponse: api.cnodeNetworkInfo,
+		WalletsState:        api.walletsState,
+	}
+	return utils.PrepareSuccessResponse(c, resp)
 }
