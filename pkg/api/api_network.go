@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -27,7 +28,7 @@ func NewNetworkAPI(walletClient walletPB.WalletClient) *NetworkAPI {
 		WalletClient: walletClient,
 	}
 
-	go func() {
+	go func(n *NetworkAPI) {
 		ctx := context.Background()
 
 		timer := time.NewTicker(5 * time.Second)
@@ -47,6 +48,7 @@ func NewNetworkAPI(walletClient walletPB.WalletClient) *NetworkAPI {
 
 			walletsState, err := n.WalletClient.GetWalletsState(ctx, &walletPB.Empty{})
 			if err != nil {
+				log.Println("GetWalletsState error: ", err.Error())
 				n.walletsState = []models.WalletState{}
 				n.walletNetworkReady = false
 			} else {
@@ -61,7 +63,7 @@ func NewNetworkAPI(walletClient walletPB.WalletClient) *NetworkAPI {
 			}
 
 		}
-	}()
+	}(n)
 
 	return n
 }
