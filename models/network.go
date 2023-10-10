@@ -4,6 +4,11 @@ import (
 	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
 )
 
+type WalletState struct {
+	Status   string   `json:"status"`
+	Progress Quantity `json:"progress"`
+}
+
 type NetworkInfoResponse struct {
 	NetworkInfo  NetworkInfo  `json:"network_info"`
 	NetworkTip   NetworkTip   `json:"network_tip"`
@@ -85,4 +90,20 @@ func ToNetworkInfoResponse(nInfo *walletPB.GetWalletNetworkInfoResponse) Network
 		},
 		WalletMode: nInfo.WalletMode,
 	}
+}
+
+func ToWalletsState(walletsState *walletPB.GetWalletsStateResponse) []WalletState {
+	wallets := make([]WalletState, 0)
+
+	for _, w := range walletsState.WalletsState {
+		wallets = append(wallets, WalletState{
+			Status: w.Status,
+			Progress: Quantity{
+				Quantity: w.Progress.Quantity,
+				Unit:     w.Progress.Unit,
+			},
+		})
+	}
+
+	return wallets
 }

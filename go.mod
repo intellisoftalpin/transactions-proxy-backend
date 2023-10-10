@@ -6,7 +6,7 @@ require (
 	github.com/bykovme/goconfig v0.0.0-20170717154220-caa70d3abfca
 	github.com/google/uuid v1.3.1
 	github.com/gookit/validate v1.5.1
-	github.com/intellisoftalpin/proto v0.0.3
+	github.com/intellisoftalpin/proto v0.0.4
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.15.0
