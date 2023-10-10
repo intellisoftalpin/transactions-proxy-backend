@@ -90,10 +90,9 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 
 	// Network
 	// Get network info
-	e.GET("/api/v1/network/info", apiHandlers.NetworkAPI.GetNetworkInfo)
 
 	g := e.Group("/api/v1")
-	g.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
+	g.GET("/network/info", apiHandlers.NetworkAPI.GetNetworkInfo)
 
 	// Users
 	// Login user with data from JSON
@@ -101,6 +100,7 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 
 	// Transactions
 	transactions := g.Group("/transactions")
+	transactions.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	transactions.Use(apiHandlers.TransactionsAPI.Middleware)
 
@@ -128,6 +128,7 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 
 	// Tokens
 	tokens := g.Group("/tokens")
+	tokens.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	// Get all tokens
 	tokens.GET("", apiHandlers.TokensAPI.GetAllTokens)
