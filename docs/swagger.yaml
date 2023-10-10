@@ -165,6 +165,61 @@ definitions:
       status:
         type: string
     type: object
+  models.NetworkInfo:
+    properties:
+      network_id:
+        type: string
+      protocol_magic:
+        type: integer
+    type: object
+  models.NetworkInfoResponse:
+    properties:
+      network_info:
+        $ref: '#/definitions/models.NetworkInfo'
+      network_tip:
+        $ref: '#/definitions/models.NetworkTip'
+      next_epoch:
+        $ref: '#/definitions/models.NextEpoch'
+      node_era:
+        type: string
+      node_tip:
+        $ref: '#/definitions/models.NodeTip'
+      sync_progress:
+        $ref: '#/definitions/models.SyncProgress'
+      wallet_mode:
+        type: string
+    type: object
+  models.NetworkTip:
+    properties:
+      absolute_slot_number:
+        type: integer
+      epoch_number:
+        type: integer
+      slot_number:
+        type: integer
+      time:
+        type: string
+    type: object
+  models.NextEpoch:
+    properties:
+      epoch_number:
+        type: integer
+      epoch_start_time:
+        type: string
+    type: object
+  models.NodeTip:
+    properties:
+      absolute_slot_number:
+        type: integer
+      epoch_number:
+        type: integer
+      height:
+        $ref: '#/definitions/models.Quantity'
+      slot_number:
+        type: integer
+      time:
+        type: string
+    type: object
   models.Pool:
     properties:
       fee:
@@ -193,6 +248,13 @@ definitions:
         items:
           $ref: '#/definitions/models.Pool'
         type: array
+    type: object
+  models.Quantity:
+    properties:
+      quantity:
+        type: integer
+      unit:
+        type: string
     type: object
   models.SaveTransactionDataResponse:
     properties:
@@ -235,6 +297,13 @@ definitions:
   models.SingleTransactionStatusResponse:
     properties:
       transactionStatus:
+        type: string
+    type: object
+  models.SyncProgress:
+    properties:
+      progress:
+        $ref: '#/definitions/models.Quantity'
+      status:
         type: string
     type: object
   models.Token:
@@ -350,6 +419,19 @@ info:
   title: Transactions proxy backend API
   version: 0.1.1
 paths:
+  /api/v1/network/info:
+    get:
+      description: Get network info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NetworkInfoResponse'
+      summary: Get network info
+      tags:
+      - Network
   /api/v1/pools:
     get:
       description: Get all pools.

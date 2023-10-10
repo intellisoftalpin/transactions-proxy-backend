@@ -37,6 +37,7 @@ func (p *PoolsRepo) DelegateToPool(delegateToPool models.DelegateToPoolRequest) 
 
 	resp, err := p.WalletClient.SubmitTransaction(ctx, &walletPB.SubmitTransactionRequest{Tx: delegateToPool.CBOR})
 	if err != nil {
+		log.Println("DelegateToPool error: ", err)
 		return "", err
 	}
 

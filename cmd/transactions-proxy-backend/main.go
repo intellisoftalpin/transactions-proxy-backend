@@ -84,11 +84,16 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	apiHandlers := api.NewAPI(db, loadedConfig, sessions, conn)
+	e.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	// Startup emptifying function
 	go apiHandlers.UsersAPI.UsersSessionsEmptify()
 
 	g := e.Group("/api/v1")
+
+	// Network
+	// Get network info
+	g.GET("/network/info", apiHandlers.NetworkAPI.GetNetworkInfo)
 
 	// Users
 	// Login user with data from JSON

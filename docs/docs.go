@@ -16,6 +16,26 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/network/info": {
+            "get": {
+                "description": "Get network info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Network"
+                ],
+                "summary": "Get network info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.NetworkInfoResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/pools": {
             "get": {
                 "description": "Get all pools.",
@@ -631,6 +651,91 @@ const docTemplate = `{
                 }
             }
         },
+        "models.NetworkInfo": {
+            "type": "object",
+            "properties": {
+                "network_id": {
+                    "type": "string"
+                },
+                "protocol_magic": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.NetworkInfoResponse": {
+            "type": "object",
+            "properties": {
+                "network_info": {
+                    "$ref": "#/definitions/models.NetworkInfo"
+                },
+                "network_tip": {
+                    "$ref": "#/definitions/models.NetworkTip"
+                },
+                "next_epoch": {
+                    "$ref": "#/definitions/models.NextEpoch"
+                },
+                "node_era": {
+                    "type": "string"
+                },
+                "node_tip": {
+                    "$ref": "#/definitions/models.NodeTip"
+                },
+                "sync_progress": {
+                    "$ref": "#/definitions/models.SyncProgress"
+                },
+                "wallet_mode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NetworkTip": {
+            "type": "object",
+            "properties": {
+                "absolute_slot_number": {
+                    "type": "integer"
+                },
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "slot_number": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NextEpoch": {
+            "type": "object",
+            "properties": {
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "epoch_start_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NodeTip": {
+            "type": "object",
+            "properties": {
+                "absolute_slot_number": {
+                    "type": "integer"
+                },
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "height": {
+                    "$ref": "#/definitions/models.Quantity"
+                },
+                "slot_number": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Pool": {
             "type": "object",
             "properties": {
@@ -671,6 +776,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Pool"
                     }
+                }
+            }
+        },
+        "models.Quantity": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "type": "integer"
+                },
+                "unit": {
+                    "type": "string"
                 }
             }
         },
@@ -735,6 +851,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "transactionStatus": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SyncProgress": {
+            "type": "object",
+            "properties": {
+                "progress": {
+                    "$ref": "#/definitions/models.Quantity"
+                },
+                "status": {
                     "type": "string"
                 }
             }

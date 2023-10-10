@@ -47,3 +47,6 @@ const (
 	CActiveTransactionStepSend             = "send"             // 3
 	CActiveTransactionStepOnlyUpdateStatus = "onlyUpdateStatus" // 4
 )
+
+const CSyncProgressStatusReady = "ready"
+const CErrorWalletNetworkIsNotReady = "walletNetworkIsNotReady"
