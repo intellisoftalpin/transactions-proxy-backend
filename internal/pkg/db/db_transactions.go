@@ -306,3 +306,184 @@ func (t *TransactionsDB) DeleteSingleTransaction(txID uint64, userID uint64) (er
 
 	return nil
 }
+
+// ---------------------------------------------------------------------------------
+
+const queryInsertActiveTransaction = `
+	INSERT INTO active_transactions (
+		user_id,
+		tx_id,
+		step)
+	VALUES (
+		$1,
+		$2,
+		$3
+	)
+`
+
+func (t *TransactionsDB) InsertActiveTransaction(userID uint64, txID uint64, step string) (err error) {
+	query, err := t.db.Prepare(queryInsertActiveTransaction)
+	if err != nil {
+		return err
+	}
+
+	if _, err = query.Exec(userID, txID, step); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const querySelectAllActiveTransactions = `
+	SELECT id, user_id, tx_id, step, attempts
+	FROM active_transactions
+`
+
+func (t *TransactionsDB) GetAllActiveTransactions() (activeTransactions []models.ActiveTransaction, err error) {
+	rows, err := t.db.Query(querySelectAllActiveTransactions)
+	if err != nil {
+		return activeTransactions, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var activeTransaction models.ActiveTransaction
+		err := rows.Scan(
+			&activeTransaction.ID,
+			&activeTransaction.UserID,
+			&activeTransaction.TxID,
+			&activeTransaction.Step,
+			&activeTransaction.Attempts,
+		)
+		if err != nil {
+			return activeTransactions, err
+		}
+
+		activeTransactions = append(activeTransactions, activeTransaction)
+	}
+
+	return activeTransactions, nil
+}
+
+const querySelectActiveTransactionsByStep = `
+	SELECT id, user_id, tx_id, step, attempts
+	FROM active_transactions
+	WHERE step = $1
+`
+
+func (t *TransactionsDB) GetActiveTransactionsByStep(step string) (activeTransactions []models.ActiveTransaction, err error) {
+	rows, err := t.db.Query(querySelectActiveTransactionsByStep, step)
+	if err != nil {
+		return activeTransactions, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var activeTransaction models.ActiveTransaction
+		err := rows.Scan(
+			&activeTransaction.ID,
+			&activeTransaction.UserID,
+			&activeTransaction.TxID,
+			&activeTransaction.Step,
+			&activeTransaction.Attempts,
+		)
+		if err != nil {
+			return activeTransactions, err
+		}
+
+		activeTransactions = append(activeTransactions, activeTransaction)
+	}
+
+	return activeTransactions, nil
+}
+
+const queryDeleteActiveTransactionByID = `
+	DELETE FROM active_transactions
+	WHERE id = $1
+`
+
+func (t *TransactionsDB) DeleteActiveTransactionByID(id uint64) (err error) {
+	query, err := t.db.Prepare(queryDeleteActiveTransactionByID)
+	if err != nil {
+		return err
+	}
+
+	if _, err = query.Exec(id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const queryUpdateActiveTransactionStep = `
+	UPDATE active_transactions
+	SET step = $2,
+		attempts = 0
+	WHERE id = $1
+`
+
+func (t *TransactionsDB) UpdateActiveTransactionStep(id uint64, step string) (err error) {
+	query, err := t.db.Prepare(queryUpdateActiveTransactionStep)
+	if err != nil {
+		return err
+	}
+
+	if _, err = query.Exec(id, step); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const queryUpdateActiveTransactionAttempts = `
+	UPDATE active_transactions
+	SET attempts = $2
+	WHERE id = $1
+`
+
+func (t *TransactionsDB) UpdateActiveTransactionAttempts(id uint64, attempts int) (err error) {
+	query, err := t.db.Prepare(queryUpdateActiveTransactionAttempts)
+	if err != nil {
+		return err
+	}
+
+	if _, err = query.Exec(id, attempts); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const querySelectOngoingTransactions = `
+	SELECT id, user_id, tx_id, step, attempts, created_at, updated_at
+	FROM active_transactions
+	WHERE user_id = $1
+`
+
+func (t *TransactionsDB) GetOngoingTransactions(userID uint64) (ongoingTransactions []models.OngoingTransaction, err error) {
+	rows, err := t.db.Query(querySelectOngoingTransactions, userID)
+	if err != nil {
+		return ongoingTransactions, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ongoingTransaction models.OngoingTransaction
+		err := rows.Scan(
+			&ongoingTransaction.ID,
+			&ongoingTransaction.UserID,
+			&ongoingTransaction.TxID,
+			&ongoingTransaction.Step,
+			&ongoingTransaction.Attempts,
+			&ongoingTransaction.CreatedAt,
+			&ongoingTransaction.UpdatedAt,
+		)
+		if err != nil {
+			return ongoingTransactions, err
+		}
+
+		ongoingTransactions = append(ongoingTransactions, ongoingTransaction)
+	}
+
+	return ongoingTransactions, nil
+}

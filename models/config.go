@@ -7,7 +7,8 @@ type Config struct {
 
 	CertPath string `json:"cert_path"`
 
-	DB DBConfig `json:"db"`
+	DB    DBConfig `json:"db"`
+	Pools []string `json:"pools"`
 }
 
 type DBConfig struct {

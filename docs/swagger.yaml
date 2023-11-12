@@ -122,6 +122,11 @@ definitions:
           Withdrawals       []Withdrawal `json:"withdrawals"`
         type: string
     type: object
+  models.ActiveTransactionsResponse:
+    properties:
+      isBusy:
+        type: boolean
+    type: object
   models.AllTransactions:
     properties:
       transactions:
@@ -148,11 +153,107 @@ definitions:
       type:
         type: string
     type: object
+  models.DelegateToPoolRequest:
+    properties:
+      cbor:
+        type: string
+    type: object
   models.DeleteSingleTransactionResponse:
     properties:
       message:
         type: string
       status:
+        type: string
+    type: object
+  models.NetworkInfo:
+    properties:
+      network_id:
+        type: string
+      protocol_magic:
+        type: integer
+    type: object
+  models.NetworkInfoResponse:
+    properties:
+      network_info:
+        $ref: '#/definitions/models.NetworkInfo'
+      network_tip:
+        $ref: '#/definitions/models.NetworkTip'
+      next_epoch:
+        $ref: '#/definitions/models.NextEpoch'
+      node_era:
+        type: string
+      node_tip:
+        $ref: '#/definitions/models.NodeTip'
+      sync_progress:
+        $ref: '#/definitions/models.SyncProgress'
+      wallet_mode:
+        type: string
+    type: object
+  models.NetworkTip:
+    properties:
+      absolute_slot_number:
+        type: integer
+      epoch_number:
+        type: integer
+      slot_number:
+        type: integer
+      time:
+        type: string
+    type: object
+  models.NextEpoch:
+    properties:
+      epoch_number:
+        type: integer
+      epoch_start_time:
+        type: string
+    type: object
+  models.NodeTip:
+    properties:
+      absolute_slot_number:
+        type: integer
+      epoch_number:
+        type: integer
+      height:
+        $ref: '#/definitions/models.Quantity'
+      slot_number:
+        type: integer
+      time:
+        type: string
+    type: object
+  models.Pool:
+    properties:
+      fee:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      pledge:
+        description: Committed Pledge in Lovelaces
+        type: string
+      poolId:
+        description: BECH 32 Pool Id
+        type: string
+      rose12:
+        type: string
+      saturation:
+        description: Reward Stake in Lovelaces
+        type: string
+      ticker:
+        type: string
+    type: object
+  models.Pools:
+    properties:
+      pools:
+        items:
+          $ref: '#/definitions/models.Pool'
+        type: array
+    type: object
+  models.Quantity:
+    properties:
+      quantity:
+        type: integer
+      unit:
         type: string
     type: object
   models.SaveTransactionDataResponse:
@@ -196,6 +297,13 @@ definitions:
   models.SingleTransactionStatusResponse:
     properties:
       transactionStatus:
+        type: string
+    type: object
+  models.SyncProgress:
+    properties:
+      progress:
+        $ref: '#/definitions/models.Quantity'
+      status:
         type: string
     type: object
   models.Token:
@@ -311,6 +419,54 @@ info:
   title: Transactions proxy backend API
   version: 0.1.1
 paths:
+  /api/v1/network/info:
+    get:
+      description: Get network info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NetworkInfoResponse'
+      summary: Get network info
+      tags:
+      - Network
+  /api/v1/pools:
+    get:
+      description: Get all pools.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Pools'
+      summary: Get All Pools.
+      tags:
+      - pools
+  /api/v1/pools/delegate:
+    post:
+      consumes:
+      - application/json
+      description: Delegate to pool.
+      parameters:
+      - description: DelegateToPoolRequest
+        in: body
+        name: DelegateToPoolRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.DelegateToPoolRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delegate to pool.
+      tags:
+      - pools
   /api/v1/tokens:
     get:
       consumes:
@@ -478,6 +634,19 @@ paths:
           schema:
             $ref: '#/definitions/models.ChangeSingleTransactionStatusResponse'
       summary: Change Single Transaction Status.
+      tags:
+      - transactions
+  /api/v1/transactions/active:
+    get:
+      description: Check user`s active transactions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ActiveTransactionsResponse'
+      summary: Check Active Transactions.
       tags:
       - transactions
   /api/v1/user/login:

@@ -257,3 +257,23 @@ func (api *TransactionsAPI) DeleteSingleTransaction(c echo.Context) error {
 
 	return utils.PrepareSuccessResponse(c, deleteSingleTransactionResponse)
 }
+
+// ################################################################################
+// CheckActiveTransactions - function to check user`s active transactions
+// CheckActiveTransactions godoc
+// @Summary Check Active Transactions.
+// @Description Check user`s active transactions.
+// @Tags transactions
+// @Produce json
+// @Success 200 {object} models.ActiveTransactionsResponse
+// @Router /api/v1/transactions/active [GET]
+func (api *TransactionsAPI) CheckActiveTransactions(c echo.Context) error {
+	sessionID := c.Request().Header.Get("session_id")
+
+	ongoingTransactionsResponse, err := api.transactionsRepo.CheckActiveTransactions(sessionID)
+	if err != nil {
+		return utils.PrepareErrorResponse(c, err.Error(), consts.CErrorsInternalError, http.StatusInternalServerError)
+	}
+
+	return utils.PrepareSuccessResponse(c, ongoingTransactionsResponse)
+}

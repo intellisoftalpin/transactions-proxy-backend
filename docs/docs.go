@@ -16,6 +16,80 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/network/info": {
+            "get": {
+                "description": "Get network info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Network"
+                ],
+                "summary": "Get network info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.NetworkInfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools": {
+            "get": {
+                "description": "Get all pools.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pools"
+                ],
+                "summary": "Get All Pools.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Pools"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/delegate": {
+            "post": {
+                "description": "Delegate to pool.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pools"
+                ],
+                "summary": "Delegate to pool.",
+                "parameters": [
+                    {
+                        "description": "DelegateToPoolRequest",
+                        "name": "DelegateToPoolRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DelegateToPoolRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/tokens": {
             "get": {
                 "description": "Get all tokens.",
@@ -274,6 +348,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/transactions/active": {
+            "get": {
+                "description": "Check user` + "`" + `s active transactions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Check Active Transactions.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ActiveTransactionsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/login": {
             "post": {
                 "description": "Login user for 24 hours and create new user in database if needed.",
@@ -489,6 +583,14 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ActiveTransactionsResponse": {
+            "type": "object",
+            "properties": {
+                "isBusy": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.AllTransactions": {
             "type": "object",
             "properties": {
@@ -530,6 +632,14 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DelegateToPoolRequest": {
+            "type": "object",
+            "properties": {
+                "cbor": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DeleteSingleTransactionResponse": {
             "type": "object",
             "properties": {
@@ -537,6 +647,145 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NetworkInfo": {
+            "type": "object",
+            "properties": {
+                "network_id": {
+                    "type": "string"
+                },
+                "protocol_magic": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.NetworkInfoResponse": {
+            "type": "object",
+            "properties": {
+                "network_info": {
+                    "$ref": "#/definitions/models.NetworkInfo"
+                },
+                "network_tip": {
+                    "$ref": "#/definitions/models.NetworkTip"
+                },
+                "next_epoch": {
+                    "$ref": "#/definitions/models.NextEpoch"
+                },
+                "node_era": {
+                    "type": "string"
+                },
+                "node_tip": {
+                    "$ref": "#/definitions/models.NodeTip"
+                },
+                "sync_progress": {
+                    "$ref": "#/definitions/models.SyncProgress"
+                },
+                "wallet_mode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NetworkTip": {
+            "type": "object",
+            "properties": {
+                "absolute_slot_number": {
+                    "type": "integer"
+                },
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "slot_number": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NextEpoch": {
+            "type": "object",
+            "properties": {
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "epoch_start_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NodeTip": {
+            "type": "object",
+            "properties": {
+                "absolute_slot_number": {
+                    "type": "integer"
+                },
+                "epoch_number": {
+                    "type": "integer"
+                },
+                "height": {
+                    "$ref": "#/definitions/models.Quantity"
+                },
+                "slot_number": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Pool": {
+            "type": "object",
+            "properties": {
+                "fee": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pledge": {
+                    "description": "Committed Pledge in Lovelaces",
+                    "type": "string"
+                },
+                "poolId": {
+                    "description": "BECH 32 Pool Id",
+                    "type": "string"
+                },
+                "rose12": {
+                    "type": "string"
+                },
+                "saturation": {
+                    "description": "Reward Stake in Lovelaces",
+                    "type": "string"
+                },
+                "ticker": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Pools": {
+            "type": "object",
+            "properties": {
+                "pools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Pool"
+                    }
+                }
+            }
+        },
+        "models.Quantity": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "type": "integer"
+                },
+                "unit": {
                     "type": "string"
                 }
             }
@@ -602,6 +851,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "transactionStatus": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SyncProgress": {
+            "type": "object",
+            "properties": {
+                "progress": {
+                    "$ref": "#/definitions/models.Quantity"
+                },
+                "status": {
                     "type": "string"
                 }
             }

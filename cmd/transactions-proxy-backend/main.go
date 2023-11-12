@@ -88,7 +88,11 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	// Startup emptifying function
 	go apiHandlers.UsersAPI.UsersSessionsEmptify()
 
+	// Network
+	// Get network info
+
 	g := e.Group("/api/v1")
+	g.GET("/network/info", apiHandlers.NetworkAPI.GetNetworkInfo)
 
 	// Users
 	// Login user with data from JSON
@@ -96,11 +100,16 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 
 	// Transactions
 	transactions := g.Group("/transactions")
+	transactions.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	transactions.Use(apiHandlers.TransactionsAPI.Middleware)
 
 	// Get all user`s transactions
 	transactions.GET("", apiHandlers.TransactionsAPI.GetAllTransactions)
+
+	// Get active user`s transactions
+	transactions.GET("/active", apiHandlers.TransactionsAPI.CheckActiveTransactions)
+
 	// Get user`s single transaction
 	transactions.GET("/:transaction_id", apiHandlers.TransactionsAPI.GetSingleTransaction)
 	// Get user`s single transaction status
@@ -119,6 +128,7 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 
 	// Tokens
 	tokens := g.Group("/tokens")
+	tokens.Use(apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	// Get all tokens
 	tokens.GET("", apiHandlers.TokensAPI.GetAllTokens)
@@ -126,6 +136,15 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	tokens.GET("/:token_id", apiHandlers.TokensAPI.GetSingleToken)
 	// Get single token price
 	tokens.GET("/:token_id/price", apiHandlers.TokensAPI.GetSingleTokenPrice)
+
+	// Pools
+	pools := g.Group("/pools")
+
+	// Get all pools
+	pools.GET("", apiHandlers.PoolsAPI.GetAllPools)
+
+	// Delegate to pool
+	pools.POST("/delegate", apiHandlers.PoolsAPI.DelegateToPool, apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	return e
 }

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"sync"
 	"time"
 
 	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
@@ -24,9 +23,9 @@ type TransactionsRepo struct {
 	UsersSessions *models.Sessions
 	WalletClient  walletPB.WalletClient
 
-	transactionsToSubmit       *TransactionsQueue
-	transactionsToUpdateStatus *TransactionsQueue
-	transactionsToSend         *TransactionsQueue
+	// transactionsToSubmit       *TransactionsQueue
+	// transactionsToUpdateStatus *TransactionsQueue
+	// transactionsToSend         *TransactionsQueue
 }
 
 func NewTransactionsRepo(db *sql.DB, config *models.Config, sessions *models.Sessions, walletClient walletPB.WalletClient) (transactionsRepo *TransactionsRepo) {
@@ -35,9 +34,9 @@ func NewTransactionsRepo(db *sql.DB, config *models.Config, sessions *models.Ses
 		UsersSessions:  sessions,
 		WalletClient:   walletClient,
 
-		transactionsToSubmit:       NewTransactionsQueue(),
-		transactionsToUpdateStatus: NewTransactionsQueue(),
-		transactionsToSend:         NewTransactionsQueue(),
+		// transactionsToSubmit:       NewTransactionsQueue(),
+		// transactionsToUpdateStatus: NewTransactionsQueue(),
+		// transactionsToSend:         NewTransactionsQueue(),
 	}
 
 	go t.submitTransactions()
@@ -236,7 +235,11 @@ func (t *TransactionsRepo) UpdateTransactionStatus(txID uint64, txStatus models.
 			return changeSingleTransactionStatusResponse, err
 		}
 
-		t.transactionsToSubmit.Store(txID, userID, true)
+		if err = t.TransactionsDB.InsertActiveTransaction(userID, txID, consts.CActiveTransactionStepSubmit); err != nil {
+			return changeSingleTransactionStatusResponse, err
+		}
+
+		// t.transactionsToSubmit.Store(txID, userID, true)
 		log.Println("Transaction TxID:", txID, "UserID:", userID, "Stored in transactionsToSubmit")
 
 		changeSingleTransactionStatusResponse.Status = txStatus.Status
@@ -287,61 +290,28 @@ func (t *TransactionsRepo) DeleteSingleTransaction(txID uint64, sessionID string
 	return deleteSingleTransactionResponse, err
 }
 
+// ################################################################################
+// models.ActiveTransactionsResponse
+// CheckActiveTransactions - function to get active user`s transactions
+func (t *TransactionsRepo) CheckActiveTransactions(sessionID string) (activeTransactionsResponse models.ActiveTransactionsResponse, err error) {
+	userID, err := t.GetUserIDFromSessionID(sessionID)
+	if err != nil {
+		return activeTransactionsResponse, err
+	}
+
+	ongoingTransactions, err := t.TransactionsDB.GetOngoingTransactions(userID)
+	if err != nil {
+		return activeTransactionsResponse, err
+	}
+
+	if len(ongoingTransactions) > 0 {
+		activeTransactionsResponse.IsBusy = true
+	}
+
+	return activeTransactionsResponse, nil
+}
+
 // ------------------------------------------------------------------------------------------
-
-type TransactionsQueue struct {
-	mx *sync.RWMutex
-	// txMap map[uint64]uint64 // key - transaction ID, value - user ID
-	txMap map[uint64]TransactionsQueueItem // key - transaction ID
-}
-
-type TransactionsQueueItem struct {
-	// TxID        uint64
-	UserID      uint64
-	CreateNewTx bool
-
-	Attempt int
-}
-
-func NewTransactionsQueue() *TransactionsQueue {
-	return &TransactionsQueue{
-		mx:    &sync.RWMutex{},
-		txMap: make(map[uint64]TransactionsQueueItem),
-	}
-}
-
-func (tx *TransactionsQueue) Store(txID uint64, userID uint64, createNewTx bool) {
-	tx.mx.Lock()
-	defer tx.mx.Unlock()
-	tx.txMap[txID] = TransactionsQueueItem{
-		UserID:      userID,
-		CreateNewTx: createNewTx,
-		Attempt:     5,
-	}
-}
-
-func (tx *TransactionsQueue) Update(txID uint64, attempt int) {
-	tx.mx.Lock()
-	defer tx.mx.Unlock()
-	tx.txMap[txID] = TransactionsQueueItem{
-		UserID:      tx.txMap[txID].UserID,
-		CreateNewTx: tx.txMap[txID].CreateNewTx,
-		Attempt:     attempt,
-	}
-}
-
-func (tx *TransactionsQueue) Load(txID uint64) (value TransactionsQueueItem, exists bool) {
-	tx.mx.RLock()
-	defer tx.mx.RUnlock()
-	value, exists = tx.txMap[txID]
-	return value, exists
-}
-
-func (tx *TransactionsQueue) Delete(txID uint64) {
-	tx.mx.Lock()
-	defer tx.mx.Unlock()
-	delete(tx.txMap, txID)
-}
 
 func (t *TransactionsRepo) submitTransactions() {
 	ticker := time.NewTicker(10 * time.Second)
@@ -349,25 +319,43 @@ func (t *TransactionsRepo) submitTransactions() {
 	for {
 		<-ticker.C
 
-		for txID, value := range t.transactionsToSubmit.txMap {
-			if value.Attempt <= 0 {
-				t.transactionsToSubmit.Delete(txID)
-				log.Println("Transaction TxID:", txID, "UserID:", value.UserID, "Deleted from transactionsToSubmit")
+		activeTransactions, err := t.TransactionsDB.GetActiveTransactionsByStep(consts.CActiveTransactionStepSubmit)
+		if err != nil {
+			log.Println("GetAllActiveTransactions Error:", err)
+			continue
+		}
+
+		for _, value := range activeTransactions {
+			txID := value.TxID
+			userID := value.UserID
+
+			if value.Attempts > 5 {
+				// 	t.transactionsToSubmit.Delete(txID)
+				// 	log.Println("Transaction TxID:", txID, "UserID:", value.UserID, "Deleted from transactionsToSubmit")
+
+				// Delete transaction from active_transactions
+				if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+					log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+					continue
+				}
 
 				// Update transaction status to "failed"
-				if err := t.TransactionsDB.UpdateTransactionStatus(txID, value.UserID, consts.CTransactionStatusFailed); err != nil {
-					log.Println("UpdateTransactionStatus TxID:", txID, "UserID:", value.UserID, "Error:", err)
+				if err := t.TransactionsDB.UpdateTransactionStatus(txID, userID, consts.CTransactionStatusFailed); err != nil {
+					log.Println("UpdateTransactionStatus TxID:", txID, "UserID:", userID, "Error:", err)
 					continue
 				}
 
 				continue
 			}
+			// t.transactionsToSubmit.Update(txID, value.Attempt-1)
 
-			t.transactionsToSubmit.Update(txID, value.Attempt-1)
+			// Update transaction attempts in active_transactions
+			if err = t.TransactionsDB.UpdateActiveTransactionAttempts(value.ID, value.Attempts+1); err != nil {
+				log.Println("UpdateActiveTransactionAttempts TxID:", txID, "UserID:", userID, "Error:", err)
+				continue
+			}
 
 			// check balance before submit transaction
-
-			userID := value.UserID
 
 			transaction, err := t.TransactionsDB.SelectTransaction(txID, userID)
 			if err != nil {
@@ -393,7 +381,13 @@ func (t *TransactionsRepo) submitTransactions() {
 					continue
 				}
 
-				t.transactionsToSubmit.Delete(txID)
+				// Delete transaction from active_transactions
+				if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+					log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+					continue
+				}
+
+				// t.transactionsToSubmit.Delete(txID)
 				log.Println("Transaction TxID:", txID, "UserID:", userID, "Deleted from transactionsToSubmit")
 				continue
 			}
@@ -403,11 +397,17 @@ func (t *TransactionsRepo) submitTransactions() {
 				continue
 			}
 
-			t.transactionsToUpdateStatus.Store(txID, userID, true)
-			log.Println("Transaction TxID:", txID, "UserID:", userID, "Stored in transactionsToUpdateStatus")
+			// Update transaction status from active_transactions
+			if err = t.TransactionsDB.UpdateActiveTransactionStep(value.ID, consts.CActiveTransactionStepUpdateStatus); err != nil {
+				log.Println("UpdateActiveTransactionStep TxID:", txID, "UserID:", userID, "Error:", err)
+				continue
+			}
 
-			t.transactionsToSubmit.Delete(txID)
-			log.Println("Transaction TxID:", txID, "UserID:", userID, "Deleted from transactionsToSubmit")
+			// t.transactionsToUpdateStatus.Store(txID, userID, true)
+			// log.Println("Transaction TxID:", txID, "UserID:", userID, "Stored in transactionsToUpdateStatus")
+
+			// t.transactionsToSubmit.Delete(txID)
+			// log.Println("Transaction TxID:", txID, "UserID:", userID, "Deleted from transactionsToSubmit")
 		}
 	}
 }
@@ -449,7 +449,22 @@ func (t *TransactionsRepo) updateTransactionStatus() {
 	for {
 		<-ticker.C
 
-		for txID, value := range t.transactionsToUpdateStatus.txMap {
+		activeTransactions, err := t.TransactionsDB.GetActiveTransactionsByStep(consts.CActiveTransactionStepUpdateStatus)
+		if err != nil {
+			log.Println("GetAllActiveTransactions Error:", err)
+			continue
+		}
+
+		activeTransactionsOnlyUpdateStatus, err := t.TransactionsDB.GetActiveTransactionsByStep(consts.CActiveTransactionStepOnlyUpdateStatus)
+		if err != nil {
+			log.Println("GetAllActiveTransactions Error:", err)
+			continue
+		}
+
+		activeTransactions = append(activeTransactions, activeTransactionsOnlyUpdateStatus...)
+
+		for _, value := range activeTransactions {
+			txID := value.TxID
 			userID := value.UserID
 
 			status, err := t.checkTransactionStatus(txID, userID)
@@ -464,12 +479,27 @@ func (t *TransactionsRepo) updateTransactionStatus() {
 			}
 
 			if status == "in_ledger" || status == "expired" {
-				if status == "in_ledger" && value.CreateNewTx {
-					t.transactionsToSend.Store(txID, userID, true)
+				if status == "in_ledger" && value.Step == consts.CActiveTransactionStepUpdateStatus {
+					// t.transactionsToSend.Store(txID, userID, true)
+
+					// Update transaction status from active_transactions
+					if err = t.TransactionsDB.UpdateActiveTransactionStep(value.ID, consts.CActiveTransactionStepSend); err != nil {
+						log.Println("UpdateActiveTransactionStep TxID:", txID, "UserID:", userID, "Error:", err)
+						continue
+					}
+
 					log.Println("Transaction TxID:", txID, "UserID:", userID, "Stored in transactionsToSend")
+				} else {
+					// t.transactionsToUpdateStatus.Delete(txID)
+
+					// Delete transaction from active_transactions
+					if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+						log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+						continue
+					}
+
+					log.Println("Transaction TxID:", txID, "UserID:", userID, "Status:", status, "Deleted from transactionsToUpdateStatus")
 				}
-				t.transactionsToUpdateStatus.Delete(txID)
-				log.Println("Transaction TxID:", txID, "UserID:", userID, "Status:", status, "Deleted from transactionsToUpdateStatus")
 			}
 		}
 	}
@@ -507,7 +537,14 @@ func (t *TransactionsRepo) createTransactions() {
 	for {
 		<-ticker.C
 
-		for txID, value := range t.transactionsToSend.txMap {
+		activeTransactions, err := t.TransactionsDB.GetActiveTransactionsByStep(consts.CActiveTransactionStepSend)
+		if err != nil {
+			log.Println("GetAllActiveTransactions Error:", err)
+			continue
+		}
+
+		for _, value := range activeTransactions {
+			txID := value.TxID
 			userID := value.UserID
 
 			ctx := context.Background()
@@ -527,8 +564,9 @@ func (t *TransactionsRepo) createTransactions() {
 				log.Println("CreateTransaction TxID:", txID, "UserID:", userID, "Error:", err)
 				continue
 			}
+
 			log.Println("CreateTransaction TxID:", txID, "UserID:", userID, "Response:", resp)
-			t.transactionsToSend.Delete(txID)
+			// t.transactionsToSend.Delete(txID)
 			log.Println("Transaction TxID:", txID, "UserID:", userID, "Deleted from transactionsToSend")
 
 			txID, err = t.TransactionsDB.InsertTransactionData(userID, "reverse", resp.TxHash, models.TransactionData{
@@ -545,7 +583,19 @@ func (t *TransactionsRepo) createTransactions() {
 				continue
 			}
 
-			t.transactionsToUpdateStatus.Store(txID, userID, false)
+			// Delete transaction from active_transactions
+			if err = t.TransactionsDB.DeleteActiveTransactionByID(value.ID); err != nil {
+				log.Println("DeleteActiveTransactionByID TxID:", txID, "UserID:", userID, "Error:", err)
+				continue
+			}
+
+			// Update transaction status from active_transactions
+			if err = t.TransactionsDB.InsertActiveTransaction(userID, txID, consts.CActiveTransactionStepOnlyUpdateStatus); err != nil {
+				log.Println("UpdateActiveTransactionStep TxID:", txID, "UserID:", userID, "Error:", err)
+				continue
+			}
+
+			// t.transactionsToUpdateStatus.Store(txID, userID, false)
 
 		}
 	}
@@ -575,3 +625,59 @@ func (t *TransactionsRepo) GetUserIDFromSessionID(sessionID string) (userID uint
 	// If session is not expired than get userID
 	return session.UserID, nil
 }
+
+// ------------------------------------------------------------------------------------------
+
+// type TransactionsQueue struct {
+// 	mx *sync.RWMutex
+// 	// txMap map[uint64]uint64 // key - transaction ID, value - user ID
+// 	txMap map[uint64]TransactionsQueueItem // key - transaction ID
+// }
+
+// type TransactionsQueueItem struct {
+// 	// TxID        uint64
+// 	UserID      uint64
+// 	CreateNewTx bool
+
+// 	Attempt int
+// }
+
+// func NewTransactionsQueue() *TransactionsQueue {
+// 	return &TransactionsQueue{
+// 		mx:    &sync.RWMutex{},
+// 		txMap: make(map[uint64]TransactionsQueueItem),
+// 	}
+// }
+
+// func (tx *TransactionsQueue) Store(txID uint64, userID uint64, createNewTx bool) {
+// 	tx.mx.Lock()
+// 	defer tx.mx.Unlock()
+// 	tx.txMap[txID] = TransactionsQueueItem{
+// 		UserID:      userID,
+// 		CreateNewTx: createNewTx,
+// 		Attempt:     5,
+// 	}
+// }
+
+// func (tx *TransactionsQueue) Update(txID uint64, attempt int) {
+// 	tx.mx.Lock()
+// 	defer tx.mx.Unlock()
+// 	tx.txMap[txID] = TransactionsQueueItem{
+// 		UserID:      tx.txMap[txID].UserID,
+// 		CreateNewTx: tx.txMap[txID].CreateNewTx,
+// 		Attempt:     attempt,
+// 	}
+// }
+
+// func (tx *TransactionsQueue) Load(txID uint64) (value TransactionsQueueItem, exists bool) {
+// 	tx.mx.RLock()
+// 	defer tx.mx.RUnlock()
+// 	value, exists = tx.txMap[txID]
+// 	return value, exists
+// }
+
+// func (tx *TransactionsQueue) Delete(txID uint64) {
+// 	tx.mx.Lock()
+// 	defer tx.mx.Unlock()
+// 	delete(tx.txMap, txID)
+// }
