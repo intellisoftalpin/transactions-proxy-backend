@@ -64,3 +64,11 @@ type OngoingTransaction struct {
 type DelegateToPoolRequest struct {
 	CBOR string `json:"cbor"`
 }
+
+type SubmitExternalTransactionRequest struct {
+	CBOR string `json:"cbor"`
+}
+
+type SubmitExternalTransactionResponse struct {
+	TxHash string `json:"txHash"`
+}

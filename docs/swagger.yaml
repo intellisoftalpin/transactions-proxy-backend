@@ -249,6 +249,13 @@ definitions:
           $ref: '#/definitions/models.Pool'
         type: array
     type: object
+  models.Progress:
+    properties:
+      quantity:
+        type: number
+      unit:
+        type: string
+    type: object
   models.Quantity:
     properties:
       quantity:
@@ -299,10 +306,20 @@ definitions:
       transactionStatus:
         type: string
     type: object
+  models.SubmitExternalTransactionRequest:
+    properties:
+      cbor:
+        type: string
+    type: object
+  models.SubmitExternalTransactionResponse:
+    properties:
+      txHash:
+        type: string
+    type: object
   models.SyncProgress:
     properties:
       progress:
-        $ref: '#/definitions/models.Quantity'
+        $ref: '#/definitions/models.Progress'
       status:
         type: string
     type: object
@@ -467,6 +484,28 @@ paths:
       summary: Delegate to pool.
       tags:
       - pools
+  /api/v1/proxy/transactions:
+    post:
+      consumes:
+      - application/json
+      description: Submit external transaction.
+      parameters:
+      - description: SubmitExternalTransactionRequest
+        in: body
+        name: SubmitExternalTransactionRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubmitExternalTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SubmitExternalTransactionResponse'
+      summary: Submit external transaction.
+      tags:
+      - proxy
   /api/v1/tokens:
     get:
       consumes:

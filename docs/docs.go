@@ -90,6 +90,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/proxy/transactions": {
+            "post": {
+                "description": "Submit external transaction.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "proxy"
+                ],
+                "summary": "Submit external transaction.",
+                "parameters": [
+                    {
+                        "description": "SubmitExternalTransactionRequest",
+                        "name": "SubmitExternalTransactionRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SubmitExternalTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SubmitExternalTransactionResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/tokens": {
             "get": {
                 "description": "Get all tokens.",
@@ -779,6 +813,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Progress": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Quantity": {
             "type": "object",
             "properties": {
@@ -855,11 +900,27 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SubmitExternalTransactionRequest": {
+            "type": "object",
+            "properties": {
+                "cbor": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SubmitExternalTransactionResponse": {
+            "type": "object",
+            "properties": {
+                "txHash": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SyncProgress": {
             "type": "object",
             "properties": {
                 "progress": {
-                    "$ref": "#/definitions/models.Quantity"
+                    "$ref": "#/definitions/models.Progress"
                 },
                 "status": {
                     "type": "string"
