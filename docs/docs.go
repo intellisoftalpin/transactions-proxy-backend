@@ -30,7 +30,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NetworkInfoResponse"
+                            "$ref": "#/definitions/models.GetNetworkInfoAPIResponse"
                         }
                     }
                 }
@@ -685,6 +685,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.GetNetworkInfoAPIResponse": {
+            "type": "object",
+            "properties": {
+                "network_info": {
+                    "$ref": "#/definitions/models.NetworkInfoResponse"
+                },
+                "wallets_state": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.WalletState"
+                    }
+                }
+            }
+        },
         "models.NetworkInfo": {
             "type": "object",
             "properties": {
@@ -1081,6 +1095,17 @@ const docTemplate = `{
                 },
                 "sessionAuthorizationKey": {
                     "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.WalletState": {
+            "type": "object",
+            "properties": {
+                "progress": {
+                    "$ref": "#/definitions/models.Progress"
                 },
                 "status": {
                     "type": "string"

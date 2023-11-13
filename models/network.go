@@ -4,6 +4,11 @@ import (
 	walletPB "github.com/intellisoftalpin/proto/proto-gen/wallet"
 )
 
+type GetNetworkInfoAPIResponse struct {
+	NetworkInfoResponse NetworkInfoResponse `json:"network_info"`
+	WalletsState        []WalletState       `json:"wallets_state"`
+}
+
 type WalletState struct {
 	Status   string   `json:"status"`
 	Progress Progress `json:"progress"`
