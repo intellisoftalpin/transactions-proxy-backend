@@ -23,7 +23,7 @@ func NewProxyAPI(config *models.Config, walletClient walletPB.WalletClient) *Pro
 	return &ProxyAPI{
 		WalletClient: walletClient,
 
-		// poolsRepo: repository.NewPoolsRepo(config, walletClient),
+		proxyRepo: repository.NewProxyRepo(config, walletClient),
 	}
 }
 
