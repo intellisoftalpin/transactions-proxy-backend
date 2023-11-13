@@ -29,6 +29,7 @@ func NewAPI(db *sql.DB, config *models.Config, sessions *models.Sessions, conn *
 		TokensAPI:       NewTokensAPI(walletClient),
 		PoolsAPI:        NewPoolsAPI(config, walletClient),
 		NetworkAPI:      NewNetworkAPI(walletClient),
+		ProxyAPI:        NewProxyAPI(config, walletClient),
 
 		Config: config,
 	}
