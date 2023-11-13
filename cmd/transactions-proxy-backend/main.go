@@ -150,7 +150,7 @@ func setupServer(db *sql.DB, sessions *models.Sessions, loadedConfig *models.Con
 	proxy := g.Group("/proxy")
 
 	// Submit External Transaction
-	proxy.POST("/transactions", apiHandlers.PoolsAPI.DelegateToPool, apiHandlers.NetworkAPI.MiddlewareNetworkReady)
+	proxy.POST("/transactions", apiHandlers.ProxyAPI.SubmitExternalTransaction, apiHandlers.NetworkAPI.MiddlewareNetworkReady)
 
 	return e
 }

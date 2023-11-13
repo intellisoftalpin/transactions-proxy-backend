@@ -15,6 +15,7 @@ type API struct {
 	TokensAPI       *TokensAPI
 	PoolsAPI        *PoolsAPI
 	NetworkAPI      *NetworkAPI
+	ProxyAPI        *ProxyAPI
 
 	Config *models.Config
 }
